@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Coleta de Dados — Agricultura Familiar Gurupi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-50: #EAF3DE;
+    --green-100: #C0DD97;
+    --green-200: #97C459;
+    --green-400: #639922;
+    --green-600: #3B6D11;
+    --green-800: #27500A;
+    --green-900: #173404;
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --amber-50: #FAEEDA;
+    --amber-100: #FAC775;
+    --amber-400: #BA7517;
+    --amber-800: #633806;
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-200: #B4B2A9;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-800: #444441;
+    --gray-900: #2C2C2A;
+    --red-50: #FCEBEB;
+    --red-400: #E24B4A;
+    --red-600: #A32D2D;
+    --blue-50: #E6F1FB;
+    --blue-400: #378ADD;
+    --blue-600: #185FA5;
+    --bg: #f4f2ec;
+    --card: #ffffff;
+    --text-main: #1a1a18;
+    --text-muted: #5F5E5A;
+    --border: rgba(60,60,40,0.15);
+    --border-strong: rgba(60,60,40,0.3);
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--green-800);
+    color: white;
+    padding: 16px 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .header-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--green-400);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  .header-text h1 {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--green-50);
+  }
+
+  .header-text p {
+    font-size: 11px;
+    color: var(--green-100);
+    margin-top: 2px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* GPS BADGE */
+  .gps-strip {
+    background: rgba(0,0,0,0.25);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .gps-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gray-400);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .gps-dot.active { background: #4ade80; box-shadow: 0 0 6px #4ade80; animation: pulse 1.5s infinite; }
+  .gps-dot.loading { background: var(--amber-100); animation: pulse 0.8s infinite; }
+  .gps-dot.error { background: #f87171; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .gps-coords {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.8);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gps-btn {
+    background: var(--green-600);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'Sora', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .gps-btn:active { opacity: 0.8; }
+
+  /* TABS */
+  .tabs-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 2px;
+    padding-top: 10px;
+    scrollbar-width: none;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .tabs-scroll::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.65);
+    border: none;
+    border-radius: 8px 8px 0 0;
+    font-size: 11px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--bg);
+    color: var(--green-800);
+  }
+
+  .tab-btn .tab-num {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    text-align: center;
+    line-height: 16px;
+    font-size: 9px;
+    margin-right: 5px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .tab-btn.active .tab-num {
+    background: var(--green-200);
+    color: var(--green-900);
+  }
+
+  /* CONTENT */
+  .content {
+    padding: 16px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .block-panel {
+    display: none;
+  }
+
+  .block-panel.active {
+    display: block;
+  }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--green-100);
+  }
+
+  .block-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--green-400);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .block-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-800);
+    flex: 1;
+  }
+
+  /* QUESTION CARDS */
+  .q-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .q-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .q-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--green-400);
+    margin-right: 6px;
+    display: inline-block;
+    min-width: 22px;
+  }
+
+  /* INPUTS */
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    background: var(--gray-50);
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--green-400);
+    background: white;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .input-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .input-inline input {
+    flex: 1;
+  }
+
+  .input-unit {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* RADIO / CHECKBOX */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .opt-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--gray-50);
+  }
+
+  .opt-item:hover {
+    border-color: var(--green-200);
+    background: var(--green-50);
+  }
+
+  .opt-item input[type="radio"],
+  .opt-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    accent-color: var(--green-400);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .opt-item label {
+    font-size: 13px;
+    color: var(--text-main);
+    cursor: pointer;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .opt-item:has(input:checked) {
+    border-color: var(--green-400);
+    background: var(--green-50);
+  }
+
+  .opt-item:has(input:checked) label {
+    color: var(--green-800);
+    font-weight: 500;
+  }
+
+  /* CONDITIONAL INPUT */
+  .conditional {
+    margin-top: 8px;
+    display: none;
+  }
+
+  .conditional.visible {
+    display: block;
+  }
+
+  /* GPS CARD */
+  .gps-card {
+    background: var(--teal-50);
+    border: 1px solid var(--teal-100);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+
+  .gps-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal-800);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .gps-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .gps-field label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--teal-600);
+    display: block;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .gps-field input {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    background: white;
+  }
+
+  .gps-field.full {
+    grid-column: 1 / -1;
+  }
+
+  .gps-accuracy {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--teal-600);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* NAV BOTTOM */
+  .nav-bottom {
+    position: sticky;
+    bottom: 0;
+    background: var(--card);
+    border-top: 0.5px solid var(--border-strong);
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-prev {
+    background: var(--gray-50);
+    color: var(--gray-600);
+    border: 0.5px solid var(--border-strong);
+    flex: 0 0 80px;
+  }
+
+  .btn-next {
+    background: var(--green-400);
+    color: white;
+  }
+
+  .btn-submit {
+    background: var(--teal-600);
+    color: white;
+  }
+
+  .btn-export {
+    background: var(--amber-400);
+    color: white;
+    flex: 0 0 auto;
+    padding: 12px 14px;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    margin: 0 16px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--green-400);
+    transition: width 0.3s;
+  }
+
+  /* FINAL SCREEN */
+  .final-screen {
+    display: none;
+    text-align: center;
+    padding: 32px 16px;
+  }
+
+  .final-screen.active {
+    display: block;
+  }
+
+  .final-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--green-50);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+  }
+
+  .final-screen h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--green-800);
+    margin-bottom: 8px;
+  }
+
+  .final-screen p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .final-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-lg {
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    border: none;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--green-800);
+    color: white;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .sub-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .section-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-top">
+    <div class="header-icon">🌱</div>
+    <div class="header-text">
+      <h1>Tecnologia Educacional e Sustentabilidade — Agricultura Familiar Gurupi-TO</h1>
+      <p>Instrumento de Coleta de Dados · Campo</p>
+    </div>
+  </div>
+  <div class="gps-strip">
+    <div class="gps-dot" id="gpsDot"></div>
+    <span class="gps-coords" id="gpsCoords">GNSS/GPS — aguardando captura</span>
+    <button class="gps-btn" onclick="captureGPS()">📡 Capturar</button>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:14.28%"></div>
+  </div>
+  <div class="tabs-scroll" id="tabsContainer"></div>
+</div>
+
+<div class="content" id="mainContent">
+
+  <!-- BLOCO 1 -->
+  <div class="block-panel active" id="panel-0">
+    <div class="block-header">
+      <span class="block-num">B1</span>
+      <span class="block-title">Caracterização Socioeconômica, Produtiva e Educacional</span>
+    </div>
+
+    <div class="gps-card">
+      <div class="gps-card-title">📡 Coordenadas GNSS/GPS da Propriedade</div>
+      <div class="gps-fields">
+        <div class="gps-field">
+          <label>Latitude</label>
+          <input type="text" id="gpsLat" placeholder="-11.7253..." readonly>
+        </div>
+        <div class="gps-field">
+          <label>Longitude</label>
+          <input type="text" id="gpsLng" placeholder="-49.0633..." readonly>
+        </div>
+        <div class="gps-field">
+          <label>Altitude (m)</label>
+          <input type="text" id="gpsAlt" placeholder="—" readonly>
+        </div>
+        <div class="gps-field">
+          <label>Precisão (m)</label>
+          <input type="text" id="gpsAcc" placeholder="—" readonly>
+        </div>
+        <div class="gps-field full">
+          <label>Data / Hora da Captura</label>
+          <input type="text" id="gpsTime" placeholder="—" readonly>
+        </div>
+      </div>
+      <div class="gps-accuracy" id="gpsStatus">Pressione "Capturar" no topo para obter as coordenadas.</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">1.</span>Idade</div>
+      <div class="input-inline">
+        <input type="number" id="q1" min="10" max="110" placeholder="Ex: 45">
+        <span class="input-unit">anos</span>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">2.</span>Sexo</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q2" id="q2a" value="Masculino"><label for="q2a">Masculino</label></div>
+        <div class="opt-item"><input type="radio" name="q2" id="q2b" value="Feminino"><label for="q2b">Feminino</label></div>
+        <div class="opt-item"><input type="radio" name="q2" id="q2c" value="Outro"><label for="q2c">Outro</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">3.</span>Escolaridade</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q3" id="q3a" value="Não alfabetizado"><label for="q3a">Não alfabetizado</label></div>
+        <div class="opt-item"><input type="radio" name="q3" id="q3b" value="Fundamental incompleto"><label for="q3b">Fundamental incompleto</label></div>
+        <div class="opt-item"><input type="radio" name="q3" id="q3c" value="Fundamental completo"><label for="q3c">Fundamental completo</label></div>
+        <div class="opt-item"><input type="radio" name="q3" id="q3d" value="Médio incompleto"><label for="q3d">Médio incompleto</label></div>
+        <div class="opt-item"><input type="radio" name="q3" id="q3e" value="Médio completo"><label for="q3e">Médio completo</label></div>
+        <div class="opt-item"><input type="radio" name="q3" id="q3f" value="Superior"><label for="q3f">Superior</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">4.</span>Tempo de atuação na agricultura familiar</div>
+      <div class="input-inline">
+        <input type="number" id="q4" min="0" max="80" placeholder="Ex: 20">
+        <span class="input-unit">anos</span>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">5.</span>Área total da propriedade</div>
+      <div class="input-inline">
+        <input type="number" id="q5" min="0" step="0.1" placeholder="Ex: 10.5">
+        <span class="input-unit">ha</span>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">6.</span>Área destinada à produção agrícola</div>
+      <div class="input-inline">
+        <input type="number" id="q6" min="0" step="0.1" placeholder="Ex: 6.0">
+        <span class="input-unit">ha</span>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">7.</span>Número de pessoas da família envolvidas diretamente na produção</div>
+      <input type="number" id="q7" min="0" max="30" placeholder="Ex: 4">
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">8.</span>Principais produtos cultivados / comercializados</div>
+      <textarea id="q8" placeholder="Ex: Mandioca, milho, hortaliças, frutas..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">9.</span>Participa de associação, cooperativa ou sindicato?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q9" id="q9a" value="Sim" onchange="toggleConditional('q9cond','Sim',this)"><label for="q9a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q9" id="q9b" value="Não" onchange="toggleConditional('q9cond','Sim',this)"><label for="q9b">Não</label></div>
+      </div>
+      <div class="conditional" id="q9cond">
+        <input type="text" id="q9detail" placeholder="Qual associação / cooperativa / sindicato?">
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">10.</span>Você considera que aprendeu a maior parte do que sabe sobre agricultura:</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q10" id="q10a" value="Com a família/comunidade"><label for="q10a">Com a família / comunidade</label></div>
+        <div class="opt-item"><input type="radio" name="q10" id="q10b" value="Com técnicos/extensão rural"><label for="q10b">Com técnicos / extensão rural</label></div>
+        <div class="opt-item"><input type="radio" name="q10" id="q10c" value="Com cursos e capacitações"><label for="q10c">Com cursos e capacitações</label></div>
+        <div class="opt-item"><input type="radio" name="q10" id="q10d" value="Com tecnologias (vídeos, internet, aplicativos)"><label for="q10d">Com tecnologias (vídeos, internet, aplicativos)</label></div>
+        <div class="opt-item"><input type="radio" name="q10" id="q10e" value="Combinando todas essas formas"><label for="q10e">Combinando todas essas formas</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 2 -->
+  <div class="block-panel" id="panel-1">
+    <div class="block-header">
+      <span class="block-num">B2</span>
+      <span class="block-title">Acesso e Condições para Uso de Tecnologias Educacionais</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">11.</span>Você possui algum dos seguintes equipamentos? <span class="sub-note">(marcar todos que se aplicam)</span></div>
+      <div class="options-list">
+        <div class="opt-item"><input type="checkbox" id="q11a" value="Smartphone"><label for="q11a">Smartphone</label></div>
+        <div class="opt-item"><input type="checkbox" id="q11b" value="Computador"><label for="q11b">Computador</label></div>
+        <div class="opt-item"><input type="checkbox" id="q11c" value="Tablet"><label for="q11c">Tablet</label></div>
+        <div class="opt-item"><input type="checkbox" id="q11d" value="Nenhum"><label for="q11d">Nenhum</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">12.</span>Como é o acesso à internet na propriedade?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q12" id="q12a" value="Bom e estável"><label for="q12a">Bom e estável</label></div>
+        <div class="opt-item"><input type="radio" name="q12" id="q12b" value="Instável"><label for="q12b">Instável</label></div>
+        <div class="opt-item"><input type="radio" name="q12" id="q12c" value="Muito limitado"><label for="q12c">Muito limitado</label></div>
+        <div class="opt-item"><input type="radio" name="q12" id="q12d" value="Não possui acesso"><label for="q12d">Não possui acesso</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">13.</span>Você já utilizou tecnologias digitais com finalidade de aprendizado agrícola?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q13" id="q13a" value="Sim" onchange="toggleConditional('q14block','Sim',this)"><label for="q13a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q13" id="q13b" value="Não" onchange="toggleConditional('q14block','Sim',this)"><label for="q13b">Não</label></div>
+      </div>
+    </div>
+
+    <div class="conditional" id="q14block">
+      <div class="q-card">
+        <div class="q-label"><span class="q-num">14.</span>Se sim, quais tecnologias já utilizou? <span class="sub-note">(marcar todas que se aplicam)</span></div>
+        <div class="options-list">
+          <div class="opt-item"><input type="checkbox" id="q14a" value="Vídeos educativos (YouTube, aulas gravadas)"><label for="q14a">Vídeos educativos (YouTube, aulas gravadas)</label></div>
+          <div class="opt-item"><input type="checkbox" id="q14b" value="Grupos técnicos de WhatsApp"><label for="q14b">Grupos técnicos de WhatsApp</label></div>
+          <div class="opt-item"><input type="checkbox" id="q14c" value="Aplicativos agrícolas"><label for="q14c">Aplicativos agrícolas</label></div>
+          <div class="opt-item"><input type="checkbox" id="q14d" value="Cursos on-line"><label for="q14d">Cursos on-line</label></div>
+          <div class="opt-item"><input type="checkbox" id="q14e" value="Materiais digitais enviados por técnicos"><label for="q14e">Materiais digitais enviados por técnicos</label></div>
+          <div class="opt-item"><input type="checkbox" id="q14f" value="Outros"><label for="q14f">Outros</label></div>
+        </div>
+        <input type="text" id="q14outros" placeholder="Especifique outros..." style="margin-top:8px">
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">15.</span>Com que frequência você utiliza tecnologias para aprender algo novo sobre agricultura?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q15" id="q15a" value="Sempre"><label for="q15a">Sempre</label></div>
+        <div class="opt-item"><input type="radio" name="q15" id="q15b" value="Frequentemente"><label for="q15b">Frequentemente</label></div>
+        <div class="opt-item"><input type="radio" name="q15" id="q15c" value="Às vezes"><label for="q15c">Às vezes</label></div>
+        <div class="opt-item"><input type="radio" name="q15" id="q15d" value="Raramente"><label for="q15d">Raramente</label></div>
+        <div class="opt-item"><input type="radio" name="q15" id="q15e" value="Nunca"><label for="q15e">Nunca</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">16.</span>Como você avalia sua facilidade para usar essas tecnologias?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q16" id="q16a" value="Muito fácil"><label for="q16a">Muito fácil</label></div>
+        <div class="opt-item"><input type="radio" name="q16" id="q16b" value="Fácil"><label for="q16b">Fácil</label></div>
+        <div class="opt-item"><input type="radio" name="q16" id="q16c" value="Difícil"><label for="q16c">Difícil</label></div>
+        <div class="opt-item"><input type="radio" name="q16" id="q16d" value="Muito difícil"><label for="q16d">Muito difícil</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 3 -->
+  <div class="block-panel" id="panel-2">
+    <div class="block-header">
+      <span class="block-num">B3</span>
+      <span class="block-title">Tecnologia Educacional como Processo de Aprendizagem</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">17.</span>As tecnologias que você utiliza ajudam realmente a entender melhor o que fazer na produção?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q17" id="q17a" value="Sim, ajudam muito"><label for="q17a">Sim, ajudam muito</label></div>
+        <div class="opt-item"><input type="radio" name="q17" id="q17b" value="Ajudam parcialmente"><label for="q17b">Ajudam parcialmente</label></div>
+        <div class="opt-item"><input type="radio" name="q17" id="q17c" value="Ajudam pouco"><label for="q17c">Ajudam pouco</label></div>
+        <div class="opt-item"><input type="radio" name="q17" id="q17d" value="Não ajudam"><label for="q17d">Não ajudam</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">18.</span>Você consegue aplicar na prática o que aprende por meio dessas tecnologias?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q18" id="q18a" value="Sempre"><label for="q18a">Sempre</label></div>
+        <div class="opt-item"><input type="radio" name="q18" id="q18b" value="Na maioria das vezes"><label for="q18b">Na maioria das vezes</label></div>
+        <div class="opt-item"><input type="radio" name="q18" id="q18c" value="Raramente"><label for="q18c">Raramente</label></div>
+        <div class="opt-item"><input type="radio" name="q18" id="q18d" value="Nunca"><label for="q18d">Nunca</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">19.</span>Cite um exemplo concreto de algo que você aprendeu por meio de tecnologia e aplicou na produção:</div>
+      <textarea id="q19" placeholder="Descreva um exemplo prático..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">20.</span>Você prefere aprender:</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q20" id="q20a" value="Sozinho, com vídeos ou aplicativos"><label for="q20a">Sozinho, com vídeos ou aplicativos</label></div>
+        <div class="opt-item"><input type="radio" name="q20" id="q20b" value="Com orientação de técnicos"><label for="q20b">Com orientação de técnicos</label></div>
+        <div class="opt-item"><input type="radio" name="q20" id="q20c" value="Em grupo, trocando experiências"><label for="q20c">Em grupo, trocando experiências</label></div>
+        <div class="opt-item"><input type="radio" name="q20" id="q20d" value="Combinando tecnologia e encontros presenciais"><label for="q20d">Combinando tecnologia e encontros presenciais</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 4 -->
+  <div class="block-panel" id="panel-3">
+    <div class="block-header">
+      <span class="block-num">B4</span>
+      <span class="block-title">Impactos na Produção Sustentável e Agroecologia</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">21.</span>O uso de tecnologias educacionais contribuiu para melhorar: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="options-list">
+        <div class="opt-item"><input type="checkbox" id="q21a" value="Manejo do solo"><label for="q21a">Manejo do solo</label></div>
+        <div class="opt-item"><input type="checkbox" id="q21b" value="Controle de pragas"><label for="q21b">Controle de pragas</label></div>
+        <div class="opt-item"><input type="checkbox" id="q21c" value="Uso consciente de insumos"><label for="q21c">Uso consciente de insumos</label></div>
+        <div class="opt-item"><input type="checkbox" id="q21d" value="Diversificação da produção"><label for="q21d">Diversificação da produção</label></div>
+        <div class="opt-item"><input type="checkbox" id="q21e" value="Práticas agroecológicas"><label for="q21e">Práticas agroecológicas</label></div>
+        <div class="opt-item"><input type="checkbox" id="q21f" value="Planejamento da produção"><label for="q21f">Planejamento da produção</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">22.</span>Após utilizar tecnologias educacionais, você percebeu mudanças: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="options-list">
+        <div class="opt-item"><input type="checkbox" id="q22a" value="No cuidado com o meio ambiente"><label for="q22a">No cuidado com o meio ambiente</label></div>
+        <div class="opt-item"><input type="checkbox" id="q22b" value="Na redução de desperdícios"><label for="q22b">Na redução de desperdícios</label></div>
+        <div class="opt-item"><input type="checkbox" id="q22c" value="Na qualidade dos produtos"><label for="q22c">Na qualidade dos produtos</label></div>
+        <div class="opt-item"><input type="checkbox" id="q22d" value="Não percebeu mudanças"><label for="q22d">Não percebeu mudanças</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">23.</span>Em sua opinião, a tecnologia ajuda a produzir de forma mais sustentável?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q23" id="q23a" value="Sim"><label for="q23a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q23" id="q23b" value="Em parte"><label for="q23b">Em parte</label></div>
+        <div class="opt-item"><input type="radio" name="q23" id="q23c" value="Não"><label for="q23c">Não</label></div>
+      </div>
+      <textarea id="q23exp" placeholder="Explique sua resposta..." style="margin-top:10px"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOCO 5 -->
+  <div class="block-panel" id="panel-4">
+    <div class="block-header">
+      <span class="block-num">B5</span>
+      <span class="block-title">Gestão, Organização e PNAE</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">24.</span>Você realiza controle da produção e das despesas?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q24" id="q24a" value="Sim, digital"><label for="q24a">Sim, digital</label></div>
+        <div class="opt-item"><input type="radio" name="q24" id="q24b" value="Sim, em caderno"><label for="q24b">Sim, em caderno</label></div>
+        <div class="opt-item"><input type="radio" name="q24" id="q24c" value="Não realiza"><label for="q24c">Não realiza</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">25.</span>As tecnologias ajudam na organização da produção para atender o PNAE?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q25" id="q25a" value="Muito"><label for="q25a">Muito</label></div>
+        <div class="opt-item"><input type="radio" name="q25" id="q25b" value="Um pouco"><label for="q25b">Um pouco</label></div>
+        <div class="opt-item"><input type="radio" name="q25" id="q25c" value="Pouco"><label for="q25c">Pouco</label></div>
+        <div class="opt-item"><input type="radio" name="q25" id="q25d" value="Não ajudam"><label for="q25d">Não ajudam</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">26.</span>O uso de tecnologias facilitou: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="options-list">
+        <div class="opt-item"><input type="checkbox" id="q26a" value="Organização da documentação"><label for="q26a">Organização da documentação</label></div>
+        <div class="opt-item"><input type="checkbox" id="q26b" value="Cumprimento de prazos"><label for="q26b">Cumprimento de prazos</label></div>
+        <div class="opt-item"><input type="checkbox" id="q26c" value="Comunicação com a escola/secretaria"><label for="q26c">Comunicação com a escola / secretaria</label></div>
+        <div class="opt-item"><input type="checkbox" id="q26d" value="Planejamento da entrega"><label for="q26d">Planejamento da entrega</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">27.</span>Você considera que o PNAE contribui para o seu aprendizado como agricultor?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q27" id="q27a" value="Sim"><label for="q27a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q27" id="q27b" value="Em parte"><label for="q27b">Em parte</label></div>
+        <div class="opt-item"><input type="radio" name="q27" id="q27c" value="Não"><label for="q27c">Não</label></div>
+      </div>
+      <textarea id="q27exp" placeholder="Explique sua resposta..." style="margin-top:10px"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOCO 6 -->
+  <div class="block-panel" id="panel-5">
+    <div class="block-header">
+      <span class="block-num">B6</span>
+      <span class="block-title">Saberes Tradicionais, Cultura e Emancipação</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">28.</span>Os conhecimentos tradicionais da sua família/comunidade são importantes para sua produção?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q28" id="q28a" value="Muito importantes"><label for="q28a">Muito importantes</label></div>
+        <div class="opt-item"><input type="radio" name="q28" id="q28b" value="Importantes"><label for="q28b">Importantes</label></div>
+        <div class="opt-item"><input type="radio" name="q28" id="q28c" value="Pouco importantes"><label for="q28c">Pouco importantes</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">29.</span>As tecnologias educacionais respeitam e dialogam com esses saberes?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q29" id="q29a" value="Sim"><label for="q29a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q29" id="q29b" value="Às vezes"><label for="q29b">Às vezes</label></div>
+        <div class="opt-item"><input type="radio" name="q29" id="q29c" value="Não"><label for="q29c">Não</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">30.</span>Você já deixou de usar alguma tecnologia por achar que ela não se adequava à sua realidade?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q30" id="q30a" value="Sim" onchange="toggleConditional('q30cond','Sim',this)"><label for="q30a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q30" id="q30b" value="Não" onchange="toggleConditional('q30cond','Sim',this)"><label for="q30b">Não</label></div>
+      </div>
+      <div class="conditional" id="q30cond">
+        <textarea id="q30exp" placeholder="Se sim, explique qual tecnologia e por quê..."></textarea>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">31.</span>O uso de tecnologias educacionais contribui para sua autonomia como agricultor?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q31" id="q31a" value="Sim"><label for="q31a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q31" id="q31b" value="Parcialmente"><label for="q31b">Parcialmente</label></div>
+        <div class="opt-item"><input type="radio" name="q31" id="q31c" value="Não"><label for="q31c">Não</label></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 7 -->
+  <div class="block-panel" id="panel-6">
+    <div class="block-header">
+      <span class="block-num">B7</span>
+      <span class="block-title">Mercados, Desenvolvimento e Reflexões Finais</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">32.</span>Além do PNAE, você comercializa para outros mercados?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q32" id="q32a" value="Sim"><label for="q32a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q32" id="q32b" value="Não"><label for="q32b">Não</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">33.</span>A tecnologia ajuda a buscar novos mercados ou divulgar seus produtos?</div>
+      <div class="options-list">
+        <div class="opt-item"><input type="radio" name="q33" id="q33a" value="Sim"><label for="q33a">Sim</label></div>
+        <div class="opt-item"><input type="radio" name="q33" id="q33b" value="Não"><label for="q33b">Não</label></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">34.</span>Quais são hoje as maiores dificuldades para ampliar mercados?</div>
+      <textarea id="q34" placeholder="Descreva as principais dificuldades..."></textarea>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <div class="block-header" style="margin-top:12px">
+      <span class="block-num" style="background:var(--teal-600)">FINAL</span>
+      <span class="block-title">Reflexão e Propostas</span>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">35.</span>Que tipo de formação ou tecnologia educacional você considera mais adequada para agricultores familiares de Gurupi?</div>
+      <textarea id="q35" placeholder="Sua opinião sobre formações e tecnologias adequadas..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">36.</span>O que poderia ser feito pelo poder público e pelas instituições de ensino para melhorar o uso da tecnologia na agricultura familiar?</div>
+      <textarea id="q36" placeholder="Sugestões para poder público e instituições de ensino..."></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label"><span class="q-num">37.</span>Gostaria de acrescentar algo sobre sua experiência com tecnologia, educação ou produção agrícola?</div>
+      <textarea id="q37" placeholder="Comentários livres..."></textarea>
+    </div>
+  </div>
+
+  <!-- TELA FINAL -->
+  <div class="final-screen" id="finalScreen">
+    <div class="final-icon">✅</div>
+    <h2>Coleta Finalizada!</h2>
+    <p>Todos os blocos foram preenchidos.<br>Exporte os dados para salvar ou compartilhar.</p>
+    <div class="final-actions">
+      <button class="btn-lg" style="background:var(--green-400);color:white" onclick="exportJSON()">⬇ Exportar JSON</button>
+      <button class="btn-lg" style="background:var(--teal-600);color:white" onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="btn-lg" style="background:var(--gray-100);color:var(--gray-800);border:0.5px solid var(--border-strong)" onclick="novaColeta()">+ Nova Coleta</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-bottom" id="navBottom">
+  <button class="btn btn-prev" id="btnPrev" onclick="navigate(-1)">← Ant.</button>
+  <button class="btn btn-next" id="btnNext" onclick="navigate(1)">Próximo →</button>
+  <button class="btn btn-export" id="btnExport" onclick="exportJSON()" title="Exportar dados">⬇</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const TABS = [
+  { label: 'Socioeconômico', short: 'B1' },
+  { label: 'Acesso Tech.', short: 'B2' },
+  { label: 'Aprendizagem', short: 'B3' },
+  { label: 'Sustentabilidade', short: 'B4' },
+  { label: 'Gestão/PNAE', short: 'B5' },
+  { label: 'Saberes', short: 'B6' },
+  { label: 'Mercados + Final', short: 'B7' },
+];
+
+let currentTab = 0;
+const totalTabs = TABS.length;
+
+function buildTabs() {
+  const c = document.getElementById('tabsContainer');
+  TABS.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.id = 'tab-' + i;
+    btn.innerHTML = `<span class="tab-num">${t.short}</span>${t.label}`;
+    btn.onclick = () => goToTab(i);
+    c.appendChild(btn);
+  });
+}
+
+function goToTab(idx) {
+  document.querySelectorAll('.block-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + idx).classList.add('active');
+  document.getElementById('tab-' + idx).classList.add('active');
+  document.getElementById('tab-' + idx).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  currentTab = idx;
+  updateNav();
+  updateProgress();
+  document.getElementById('mainContent').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function navigate(dir) {
+  const next = currentTab + dir;
+  if (next < 0) return;
+  if (next >= totalTabs) {
+    submitForm();
+    return;
+  }
+  goToTab(next);
+}
+
+function updateNav() {
+  const prev = document.getElementById('btnPrev');
+  const next = document.getElementById('btnNext');
+  prev.style.opacity = currentTab === 0 ? '0.35' : '1';
+  prev.disabled = currentTab === 0;
+  if (currentTab === totalTabs - 1) {
+    next.textContent = 'Finalizar ✓';
+    next.className = 'btn btn-submit';
+  } else {
+    next.textContent = 'Próximo →';
+    next.className = 'btn btn-next';
+  }
+}
+
+function updateProgress() {
+  const pct = ((currentTab + 1) / totalTabs) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function submitForm() {
+  document.querySelectorAll('.block-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('finalScreen').classList.add('active');
+  document.getElementById('navBottom').style.display = 'none';
+  document.getElementById('tabsContainer').style.display = 'none';
+  showToast('Formulário concluído! 🌱');
+}
+
+function novaColeta() {
+  if (!confirm('Iniciar nova coleta? Os dados atuais serão perdidos (salve antes).')) return;
+  location.reload();
+}
+
+// GPS
+function captureGPS() {
+  const dot = document.getElementById('gpsDot');
+  const coords = document.getElementById('gpsCoords');
+  const status = document.getElementById('gpsStatus');
+
+  if (!navigator.geolocation) {
+    coords.textContent = 'Geolocalização não suportada neste dispositivo.';
+    dot.className = 'gps-dot error';
+    status.textContent = 'Erro: API de geolocalização indisponível.';
+    return;
+  }
+
+  dot.className = 'gps-dot loading';
+  coords.textContent = 'Aguardando sinal GNSS/GPS...';
+  status.textContent = 'Buscando coordenadas...';
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude.toFixed(7);
+      const lng = pos.coords.longitude.toFixed(7);
+      const alt = pos.coords.altitude ? pos.coords.altitude.toFixed(1) + ' m' : '—';
+      const acc = pos.coords.accuracy ? pos.coords.accuracy.toFixed(1) + ' m' : '—';
+      const now = new Date().toLocaleString('pt-BR');
+
+      document.getElementById('gpsLat').value = lat;
+      document.getElementById('gpsLng').value = lng;
+      document.getElementById('gpsAlt').value = alt;
+      document.getElementById('gpsAcc').value = acc;
+      document.getElementById('gpsTime').value = now;
+
+      dot.className = 'gps-dot active';
+      coords.textContent = `Lat: ${lat} | Lng: ${lng} | ±${acc}`;
+      status.textContent = `✓ Coordenadas capturadas em ${now}`;
+      showToast('Coordenadas capturadas com sucesso!');
+    },
+    (err) => {
+      dot.className = 'gps-dot error';
+      const msgs = {
+        1: 'Permissão negada. Habilite a localização no navegador.',
+        2: 'Sinal indisponível. Tente em local aberto.',
+        3: 'Tempo esgotado. Tente novamente.',
+      };
+      const msg = msgs[err.code] || 'Erro desconhecido.';
+      coords.textContent = 'Erro: ' + msg;
+      status.textContent = '✗ ' + msg;
+      showToast('Erro GPS: ' + msg);
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+  );
+}
+
+// Conditional visibility
+function toggleConditional(condId, triggerValue, radioEl) {
+  const cond = document.getElementById(condId);
+  if (!cond) return;
+  cond.classList.toggle('visible', radioEl.value === triggerValue && radioEl.checked);
+}
+
+// Data collection
+function collectData() {
+  const data = {
+    meta: {
+      formulario: 'Tecnologia Educacional e Sustentabilidade — Agricultura Familiar Gurupi-TO',
+      versao: '1.0',
+      dataColeta: new Date().toLocaleString('pt-BR'),
+    },
+    gps: {
+      latitude: document.getElementById('gpsLat').value || null,
+      longitude: document.getElementById('gpsLng').value || null,
+      altitude: document.getElementById('gpsAlt').value || null,
+      precisao: document.getElementById('gpsAcc').value || null,
+      dataHoraCaptura: document.getElementById('gpsTime').value || null,
+    },
+    bloco1: {
+      q1_idade: document.getElementById('q1').value,
+      q2_sexo: getRadio('q2'),
+      q3_escolaridade: getRadio('q3'),
+      q4_tempoAtuacao: document.getElementById('q4').value,
+      q5_areaTotalHa: document.getElementById('q5').value,
+      q6_areaProducaoHa: document.getElementById('q6').value,
+      q7_pessoasFamilia: document.getElementById('q7').value,
+      q8_principaisProdutos: document.getElementById('q8').value,
+      q9_associacao: getRadio('q9'),
+      q9_qualAssociacao: document.getElementById('q9detail').value,
+      q10_origemAprendizado: getRadio('q10'),
+    },
+    bloco2: {
+      q11_equipamentos: getCheckboxes(['q11a','q11b','q11c','q11d']),
+      q12_internet: getRadio('q12'),
+      q13_usouTecnologia: getRadio('q13'),
+      q14_tecnologiasUsadas: getCheckboxes(['q14a','q14b','q14c','q14d','q14e','q14f']),
+      q14_outros: document.getElementById('q14outros').value,
+      q15_frequencia: getRadio('q15'),
+      q16_facilidade: getRadio('q16'),
+    },
+    bloco3: {
+      q17_ajudamEntender: getRadio('q17'),
+      q18_aplicaNaPratica: getRadio('q18'),
+      q19_exemploConcreto: document.getElementById('q19').value,
+      q20_preferencia: getRadio('q20'),
+    },
+    bloco4: {
+      q21_melhorias: getCheckboxes(['q21a','q21b','q21c','q21d','q21e','q21f']),
+      q22_mudancasPercebidas: getCheckboxes(['q22a','q22b','q22c','q22d']),
+      q23_ajudaSustentabilidade: getRadio('q23'),
+      q23_explicacao: document.getElementById('q23exp').value,
+    },
+    bloco5: {
+      q24_controleProducao: getRadio('q24'),
+      q25_tecnologiaPNAE: getRadio('q25'),
+      q26_facilitou: getCheckboxes(['q26a','q26b','q26c','q26d']),
+      q27_PNAEaprendizado: getRadio('q27'),
+      q27_explicacao: document.getElementById('q27exp').value,
+    },
+    bloco6: {
+      q28_saberesTradicionals: getRadio('q28'),
+      q29_tecnologiaDialoga: getRadio('q29'),
+      q30_deixouDeUsar: getRadio('q30'),
+      q30_explicacao: document.getElementById('q30exp') ? document.getElementById('q30exp').value : '',
+      q31_autonomia: getRadio('q31'),
+    },
+    bloco7: {
+      q32_outrosMercados: getRadio('q32'),
+        q33_tecnologiaMercados: getRadio('q33'),
+        q34_dificuldadesMercados: document.getElementById('q34').value,
+    },
+    blocoFinal: {
+      q35_tecnologiaAdequada: document.getElementById('q35').value,
+      q36_sugestoesPoliticas: document.getElementById('q36').value,
+      q37_comentariosLivres: document.getElementById('q37').value,
+    }
+  };
+  return data;
+}
+
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function getCheckboxes(ids) {
+  return ids.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  }).map(id => document.getElementById(id).value);
+}
+
+function exportJSON() {
+  const data = collectData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+  a.href = url;
+  a.download = `coleta_agri_familiar_${ts}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON exportado com sucesso!');
+}
+
+function exportCSV() {
+  const data = collectData();
+  const flat = flattenObj(data);
+  const keys = Object.keys(flat);
+  const vals = keys.map(k => '"' + String(flat[k] || '').replace(/"/g, '""') + '"');
+  const csv = keys.join(',') + '\n' + vals.join(',');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+  a.href = url;
+  a.download = `coleta_agri_familiar_${ts}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exportado com sucesso!');
+}
+
+function flattenObj(obj, prefix = '') {
+  return Object.keys(obj).reduce((acc, k) => {
+    const pre = prefix ? prefix + '_' : '';
+    const val = obj[k];
+    if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+      Object.assign(acc, flattenObj(val, pre + k));
+    } else if (Array.isArray(val)) {
+      acc[pre + k] = val.join('; ');
+    } else {
+      acc[pre + k] = val;
+    }
+    return acc;
+  }, {});
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Init
+buildTabs();
+updateNav();
+updateProgress();
+</script>
+</body>
+</html>
