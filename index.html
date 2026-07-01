@@ -230,6 +230,28 @@
     font-weight: 600;
   }
 
+  .list-search-wrap {
+    padding: 10px 16px;
+    background: var(--card);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .list-search-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'Sora', sans-serif;
+    font-size: 12.5px;
+    background: var(--bg);
+    color: var(--text-main);
+  }
+
+  .list-search-input:focus {
+    outline: none;
+    border-color: var(--green-400);
+  }
+
   .list-close-btn {
     background: var(--gray-100);
     border: none;
@@ -427,6 +449,19 @@
     border-radius: var(--radius-lg);
     padding: 14px 16px;
     margin-bottom: 10px;
+  }
+
+  .q-card-key {
+    border: 1px solid var(--amber-400);
+    background: var(--amber-50);
+  }
+
+  .q-card-key .sub-note {
+    color: var(--amber-800);
+    font-weight: 500;
+    margin-top: 0;
+    margin-left: 6px;
+    font-size: 10px;
   }
 
   .q-label {
@@ -827,8 +862,18 @@
       <div class="gps-accuracy" id="gpsStatus">Pressione "Capturar" no topo para obter as coordenadas.</div>
     </div>
 
+    <div class="q-card q-card-key">
+      <div class="q-label"><span class="q-num">1.</span>Nome do produtor(a) <span class="sub-note" style="display:inline">🔑 identificador da entrevista</span></div>
+      <input type="text" id="nomeProdutor" placeholder="Nome completo do entrevistado(a)">
+    </div>
+
+    <div class="q-card q-card-key">
+      <div class="q-label"><span class="q-num">2.</span>Nome da propriedade <span class="sub-note" style="display:inline">🔑 identificador da entrevista</span></div>
+      <input type="text" id="nomePropriedade" placeholder="Nome do sítio / propriedade / lote">
+    </div>
+
     <div class="q-card">
-      <div class="q-label"><span class="q-num">1.</span>Idade</div>
+      <div class="q-label"><span class="q-num">3.</span>Idade</div>
       <div class="input-inline">
         <input type="number" id="q1" min="10" max="110" placeholder="Ex: 45">
         <span class="input-unit">anos</span>
@@ -836,7 +881,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">2.</span>Sexo</div>
+      <div class="q-label"><span class="q-num">4.</span>Sexo</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q2" id="q2a" value="Masculino"><label for="q2a">Masculino</label></div>
         <div class="opt-item"><input type="radio" name="q2" id="q2b" value="Feminino"><label for="q2b">Feminino</label></div>
@@ -845,7 +890,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">3.</span>Escolaridade</div>
+      <div class="q-label"><span class="q-num">5.</span>Escolaridade</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q3" id="q3a" value="Não alfabetizado"><label for="q3a">Não alfabetizado</label></div>
         <div class="opt-item"><input type="radio" name="q3" id="q3b" value="Fundamental incompleto"><label for="q3b">Fundamental incompleto</label></div>
@@ -857,7 +902,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">4.</span>Tempo de atuação na agricultura familiar</div>
+      <div class="q-label"><span class="q-num">6.</span>Tempo de atuação na agricultura familiar</div>
       <div class="input-inline">
         <input type="number" id="q4" min="0" max="80" placeholder="Ex: 20">
         <span class="input-unit">anos</span>
@@ -865,7 +910,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">5.</span>Área total da propriedade</div>
+      <div class="q-label"><span class="q-num">7.</span>Área total da propriedade</div>
       <div class="input-inline">
         <input type="number" id="q5" min="0" step="0.1" placeholder="Ex: 10.5">
         <span class="input-unit">ha</span>
@@ -873,7 +918,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">6.</span>Área destinada à produção agrícola</div>
+      <div class="q-label"><span class="q-num">8.</span>Área destinada à produção agrícola</div>
       <div class="input-inline">
         <input type="number" id="q6" min="0" step="0.1" placeholder="Ex: 6.0">
         <span class="input-unit">ha</span>
@@ -881,17 +926,17 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">7.</span>Número de pessoas da família envolvidas diretamente na produção</div>
+      <div class="q-label"><span class="q-num">9.</span>Número de pessoas da família envolvidas diretamente na produção</div>
       <input type="number" id="q7" min="0" max="30" placeholder="Ex: 4">
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">8.</span>Principais produtos cultivados / comercializados</div>
+      <div class="q-label"><span class="q-num">10.</span>Principais produtos cultivados / comercializados</div>
       <textarea id="q8" placeholder="Ex: Mandioca, milho, hortaliças, frutas..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">9.</span>Participa de associação, cooperativa ou sindicato?</div>
+      <div class="q-label"><span class="q-num">11.</span>Participa de associação, cooperativa ou sindicato?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q9" id="q9a" value="Sim" onchange="toggleConditional('q9cond','Sim',this)"><label for="q9a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q9" id="q9b" value="Não" onchange="toggleConditional('q9cond','Sim',this)"><label for="q9b">Não</label></div>
@@ -902,7 +947,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">10.</span>Você considera que aprendeu a maior parte do que sabe sobre agricultura:</div>
+      <div class="q-label"><span class="q-num">12.</span>Você considera que aprendeu a maior parte do que sabe sobre agricultura:</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q10" id="q10a" value="Com a família/comunidade"><label for="q10a">Com a família / comunidade</label></div>
         <div class="opt-item"><input type="radio" name="q10" id="q10b" value="Com técnicos/extensão rural"><label for="q10b">Com técnicos / extensão rural</label></div>
@@ -921,7 +966,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">11.</span>Você possui algum dos seguintes equipamentos? <span class="sub-note">(marcar todos que se aplicam)</span></div>
+      <div class="q-label"><span class="q-num">13.</span>Você possui algum dos seguintes equipamentos? <span class="sub-note">(marcar todos que se aplicam)</span></div>
       <div class="options-list">
         <div class="opt-item"><input type="checkbox" id="q11a" value="Smartphone"><label for="q11a">Smartphone</label></div>
         <div class="opt-item"><input type="checkbox" id="q11b" value="Computador"><label for="q11b">Computador</label></div>
@@ -931,7 +976,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">12.</span>Como é o acesso à internet na propriedade?</div>
+      <div class="q-label"><span class="q-num">14.</span>Como é o acesso à internet na propriedade?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q12" id="q12a" value="Bom e estável"><label for="q12a">Bom e estável</label></div>
         <div class="opt-item"><input type="radio" name="q12" id="q12b" value="Instável"><label for="q12b">Instável</label></div>
@@ -941,7 +986,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">13.</span>Você já utilizou tecnologias digitais com finalidade de aprendizado agrícola?</div>
+      <div class="q-label"><span class="q-num">15.</span>Você já utilizou tecnologias digitais com finalidade de aprendizado agrícola?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q13" id="q13a" value="Sim" onchange="toggleConditional('q14block','Sim',this)"><label for="q13a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q13" id="q13b" value="Não" onchange="toggleConditional('q14block','Sim',this)"><label for="q13b">Não</label></div>
@@ -950,7 +995,7 @@
 
     <div class="conditional" id="q14block">
       <div class="q-card">
-        <div class="q-label"><span class="q-num">14.</span>Se sim, quais tecnologias já utilizou? <span class="sub-note">(marcar todas que se aplicam)</span></div>
+        <div class="q-label"><span class="q-num">16.</span>Se sim, quais tecnologias já utilizou? <span class="sub-note">(marcar todas que se aplicam)</span></div>
         <div class="options-list">
           <div class="opt-item"><input type="checkbox" id="q14a" value="Vídeos educativos (YouTube, aulas gravadas)"><label for="q14a">Vídeos educativos (YouTube, aulas gravadas)</label></div>
           <div class="opt-item"><input type="checkbox" id="q14b" value="Grupos técnicos de WhatsApp"><label for="q14b">Grupos técnicos de WhatsApp</label></div>
@@ -964,7 +1009,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">15.</span>Com que frequência você utiliza tecnologias para aprender algo novo sobre agricultura?</div>
+      <div class="q-label"><span class="q-num">17.</span>Com que frequência você utiliza tecnologias para aprender algo novo sobre agricultura?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q15" id="q15a" value="Sempre"><label for="q15a">Sempre</label></div>
         <div class="opt-item"><input type="radio" name="q15" id="q15b" value="Frequentemente"><label for="q15b">Frequentemente</label></div>
@@ -975,7 +1020,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">16.</span>Como você avalia sua facilidade para usar essas tecnologias?</div>
+      <div class="q-label"><span class="q-num">18.</span>Como você avalia sua facilidade para usar essas tecnologias?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q16" id="q16a" value="Muito fácil"><label for="q16a">Muito fácil</label></div>
         <div class="opt-item"><input type="radio" name="q16" id="q16b" value="Fácil"><label for="q16b">Fácil</label></div>
@@ -993,7 +1038,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">17.</span>As tecnologias que você utiliza ajudam realmente a entender melhor o que fazer na produção?</div>
+      <div class="q-label"><span class="q-num">19.</span>As tecnologias que você utiliza ajudam realmente a entender melhor o que fazer na produção?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q17" id="q17a" value="Sim, ajudam muito"><label for="q17a">Sim, ajudam muito</label></div>
         <div class="opt-item"><input type="radio" name="q17" id="q17b" value="Ajudam parcialmente"><label for="q17b">Ajudam parcialmente</label></div>
@@ -1003,7 +1048,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">18.</span>Você consegue aplicar na prática o que aprende por meio dessas tecnologias?</div>
+      <div class="q-label"><span class="q-num">20.</span>Você consegue aplicar na prática o que aprende por meio dessas tecnologias?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q18" id="q18a" value="Sempre"><label for="q18a">Sempre</label></div>
         <div class="opt-item"><input type="radio" name="q18" id="q18b" value="Na maioria das vezes"><label for="q18b">Na maioria das vezes</label></div>
@@ -1013,12 +1058,12 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">19.</span>Cite um exemplo concreto de algo que você aprendeu por meio de tecnologia e aplicou na produção:</div>
+      <div class="q-label"><span class="q-num">21.</span>Cite um exemplo concreto de algo que você aprendeu por meio de tecnologia e aplicou na produção:</div>
       <textarea id="q19" placeholder="Descreva um exemplo prático..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">20.</span>Você prefere aprender:</div>
+      <div class="q-label"><span class="q-num">22.</span>Você prefere aprender:</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q20" id="q20a" value="Sozinho, com vídeos ou aplicativos"><label for="q20a">Sozinho, com vídeos ou aplicativos</label></div>
         <div class="opt-item"><input type="radio" name="q20" id="q20b" value="Com orientação de técnicos"><label for="q20b">Com orientação de técnicos</label></div>
@@ -1036,7 +1081,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">21.</span>O uso de tecnologias educacionais contribuiu para melhorar: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="q-label"><span class="q-num">23.</span>O uso de tecnologias educacionais contribuiu para melhorar: <span class="sub-note">(marcar os que se aplicam)</span></div>
       <div class="options-list">
         <div class="opt-item"><input type="checkbox" id="q21a" value="Manejo do solo"><label for="q21a">Manejo do solo</label></div>
         <div class="opt-item"><input type="checkbox" id="q21b" value="Controle de pragas"><label for="q21b">Controle de pragas</label></div>
@@ -1048,7 +1093,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">22.</span>Após utilizar tecnologias educacionais, você percebeu mudanças: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="q-label"><span class="q-num">24.</span>Após utilizar tecnologias educacionais, você percebeu mudanças: <span class="sub-note">(marcar os que se aplicam)</span></div>
       <div class="options-list">
         <div class="opt-item"><input type="checkbox" id="q22a" value="No cuidado com o meio ambiente"><label for="q22a">No cuidado com o meio ambiente</label></div>
         <div class="opt-item"><input type="checkbox" id="q22b" value="Na redução de desperdícios"><label for="q22b">Na redução de desperdícios</label></div>
@@ -1058,7 +1103,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">23.</span>Em sua opinião, a tecnologia ajuda a produzir de forma mais sustentável?</div>
+      <div class="q-label"><span class="q-num">25.</span>Em sua opinião, a tecnologia ajuda a produzir de forma mais sustentável?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q23" id="q23a" value="Sim"><label for="q23a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q23" id="q23b" value="Em parte"><label for="q23b">Em parte</label></div>
@@ -1076,7 +1121,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">24.</span>Você realiza controle da produção e das despesas?</div>
+      <div class="q-label"><span class="q-num">26.</span>Você realiza controle da produção e das despesas?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q24" id="q24a" value="Sim, digital"><label for="q24a">Sim, digital</label></div>
         <div class="opt-item"><input type="radio" name="q24" id="q24b" value="Sim, em caderno"><label for="q24b">Sim, em caderno</label></div>
@@ -1085,7 +1130,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">25.</span>As tecnologias ajudam na organização da produção para atender o PNAE?</div>
+      <div class="q-label"><span class="q-num">27.</span>As tecnologias ajudam na organização da produção para atender o PNAE?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q25" id="q25a" value="Muito"><label for="q25a">Muito</label></div>
         <div class="opt-item"><input type="radio" name="q25" id="q25b" value="Um pouco"><label for="q25b">Um pouco</label></div>
@@ -1095,7 +1140,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">26.</span>O uso de tecnologias facilitou: <span class="sub-note">(marcar os que se aplicam)</span></div>
+      <div class="q-label"><span class="q-num">28.</span>O uso de tecnologias facilitou: <span class="sub-note">(marcar os que se aplicam)</span></div>
       <div class="options-list">
         <div class="opt-item"><input type="checkbox" id="q26a" value="Organização da documentação"><label for="q26a">Organização da documentação</label></div>
         <div class="opt-item"><input type="checkbox" id="q26b" value="Cumprimento de prazos"><label for="q26b">Cumprimento de prazos</label></div>
@@ -1105,7 +1150,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">27.</span>Você considera que o PNAE contribui para o seu aprendizado como agricultor?</div>
+      <div class="q-label"><span class="q-num">29.</span>Você considera que o PNAE contribui para o seu aprendizado como agricultor?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q27" id="q27a" value="Sim"><label for="q27a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q27" id="q27b" value="Em parte"><label for="q27b">Em parte</label></div>
@@ -1123,7 +1168,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">28.</span>Os conhecimentos tradicionais da sua família/comunidade são importantes para sua produção?</div>
+      <div class="q-label"><span class="q-num">30.</span>Os conhecimentos tradicionais da sua família/comunidade são importantes para sua produção?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q28" id="q28a" value="Muito importantes"><label for="q28a">Muito importantes</label></div>
         <div class="opt-item"><input type="radio" name="q28" id="q28b" value="Importantes"><label for="q28b">Importantes</label></div>
@@ -1132,7 +1177,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">29.</span>As tecnologias educacionais respeitam e dialogam com esses saberes?</div>
+      <div class="q-label"><span class="q-num">31.</span>As tecnologias educacionais respeitam e dialogam com esses saberes?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q29" id="q29a" value="Sim"><label for="q29a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q29" id="q29b" value="Às vezes"><label for="q29b">Às vezes</label></div>
@@ -1141,7 +1186,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">30.</span>Você já deixou de usar alguma tecnologia por achar que ela não se adequava à sua realidade?</div>
+      <div class="q-label"><span class="q-num">32.</span>Você já deixou de usar alguma tecnologia por achar que ela não se adequava à sua realidade?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q30" id="q30a" value="Sim" onchange="toggleConditional('q30cond','Sim',this)"><label for="q30a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q30" id="q30b" value="Não" onchange="toggleConditional('q30cond','Sim',this)"><label for="q30b">Não</label></div>
@@ -1152,7 +1197,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">31.</span>O uso de tecnologias educacionais contribui para sua autonomia como agricultor?</div>
+      <div class="q-label"><span class="q-num">33.</span>O uso de tecnologias educacionais contribui para sua autonomia como agricultor?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q31" id="q31a" value="Sim"><label for="q31a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q31" id="q31b" value="Parcialmente"><label for="q31b">Parcialmente</label></div>
@@ -1169,7 +1214,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">32.</span>Além do PNAE, você comercializa para outros mercados?</div>
+      <div class="q-label"><span class="q-num">34.</span>Além do PNAE, você comercializa para outros mercados?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q32" id="q32a" value="Sim"><label for="q32a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q32" id="q32b" value="Não"><label for="q32b">Não</label></div>
@@ -1177,7 +1222,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">33.</span>A tecnologia ajuda a buscar novos mercados ou divulgar seus produtos?</div>
+      <div class="q-label"><span class="q-num">35.</span>A tecnologia ajuda a buscar novos mercados ou divulgar seus produtos?</div>
       <div class="options-list">
         <div class="opt-item"><input type="radio" name="q33" id="q33a" value="Sim"><label for="q33a">Sim</label></div>
         <div class="opt-item"><input type="radio" name="q33" id="q33b" value="Não"><label for="q33b">Não</label></div>
@@ -1185,7 +1230,7 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">34.</span>Quais são hoje as maiores dificuldades para ampliar mercados?</div>
+      <div class="q-label"><span class="q-num">36.</span>Quais são hoje as maiores dificuldades para ampliar mercados?</div>
       <textarea id="q34" placeholder="Descreva as principais dificuldades..."></textarea>
     </div>
 
@@ -1197,17 +1242,17 @@
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">35.</span>Que tipo de formação ou tecnologia educacional você considera mais adequada para agricultores familiares de Gurupi?</div>
+      <div class="q-label"><span class="q-num">37.</span>Que tipo de formação ou tecnologia educacional você considera mais adequada para agricultores familiares de Gurupi?</div>
       <textarea id="q35" placeholder="Sua opinião sobre formações e tecnologias adequadas..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">36.</span>O que poderia ser feito pelo poder público e pelas instituições de ensino para melhorar o uso da tecnologia na agricultura familiar?</div>
+      <div class="q-label"><span class="q-num">38.</span>O que poderia ser feito pelo poder público e pelas instituições de ensino para melhorar o uso da tecnologia na agricultura familiar?</div>
       <textarea id="q36" placeholder="Sugestões para poder público e instituições de ensino..."></textarea>
     </div>
 
     <div class="q-card">
-      <div class="q-label"><span class="q-num">37.</span>Gostaria de acrescentar algo sobre sua experiência com tecnologia, educação ou produção agrícola?</div>
+      <div class="q-label"><span class="q-num">39.</span>Gostaria de acrescentar algo sobre sua experiência com tecnologia, educação ou produção agrícola?</div>
       <textarea id="q37" placeholder="Comentários livres..."></textarea>
     </div>
   </div>
@@ -1256,6 +1301,9 @@
     <div class="list-modal-header">
       <h3>📋 Entrevistas Salvas</h3>
       <button class="list-close-btn" onclick="fecharListaEntrevistas()">✕</button>
+    </div>
+    <div class="list-search-wrap">
+      <input type="text" id="listSearchInput" class="list-search-input" placeholder="🔍 Buscar por nome do produtor ou propriedade..." oninput="renderListaEntrevistas()">
     </div>
     <div class="list-modal-body" id="listModalBody"></div>
   </div>
@@ -1463,6 +1511,8 @@ function collectData() {
       dataHoraCaptura: document.getElementById('gpsTime').value || null,
     },
     bloco1: {
+      nomeProdutor: document.getElementById('nomeProdutor').value,
+      nomePropriedade: document.getElementById('nomePropriedade').value,
       q1_idade: document.getElementById('q1').value,
       q2_sexo: getRadio('q2'),
       q3_escolaridade: getRadio('q3'),
@@ -1644,6 +1694,8 @@ function preencherFormulario(entry) {
 
   // Bloco 1
   const b1 = entry.bloco1 || {};
+  setFieldValue('nomeProdutor', b1.nomeProdutor);
+  setFieldValue('nomePropriedade', b1.nomePropriedade);
   setFieldValue('q1', b1.q1_idade);
   setRadioValue('q2', b1.q2_sexo);
   setRadioValue('q3', b1.q3_escolaridade);
@@ -1718,6 +1770,8 @@ function escapeHtml(str) {
 }
 
 function abrirListaEntrevistas() {
+  const searchInput = document.getElementById('listSearchInput');
+  if (searchInput) searchInput.value = '';
   renderListaEntrevistas();
   document.getElementById('listOverlay').classList.add('open');
 }
@@ -1736,27 +1790,45 @@ function renderListaEntrevistas() {
     return;
   }
 
+  const termoBusca = (document.getElementById('listSearchInput')?.value || '').trim().toLowerCase();
+
   const idAtual = getCurrentEntrevistaId();
-  const ordenado = db.slice().sort((a, b) => {
+  let filtrado = db.slice();
+
+  if (termoBusca) {
+    filtrado = filtrado.filter(entry => {
+      const b1 = entry.bloco1 || {};
+      const nome = (b1.nomeProdutor || '').toLowerCase();
+      const propriedade = (b1.nomePropriedade || '').toLowerCase();
+      return nome.includes(termoBusca) || propriedade.includes(termoBusca);
+    });
+  }
+
+  const ordenado = filtrado.sort((a, b) => {
     const ta = (a.meta && (a.meta.atualizadoEm || a.meta.criadoEm)) || '';
     const tb = (b.meta && (b.meta.atualizadoEm || b.meta.criadoEm)) || '';
     return tb.localeCompare(ta);
   });
 
+  if (ordenado.length === 0) {
+    body.innerHTML = '<p class="list-empty">Nenhuma entrevista encontrada para esta busca.</p>';
+    return;
+  }
+
   body.innerHTML = ordenado.map(entry => {
     const meta = entry.meta || {};
     const b1 = entry.bloco1 || {};
+    const nomeProdutor = b1.nomeProdutor ? escapeHtml(b1.nomeProdutor) : 'Nome não informado';
+    const nomePropriedade = b1.nomePropriedade ? escapeHtml(b1.nomePropriedade) : 'Propriedade não informada';
     const idade = b1.q1_idade ? `${b1.q1_idade} anos` : 'idade não informada';
-    const sexo = b1.q2_sexo || 'Sexo não informado';
-    const produtos = b1.q8_principaisProdutos ? escapeHtml(b1.q8_principaisProdutos) : '';
     const atualizado = meta.atualizadoEm || meta.criadoEm || meta.dataColeta || '—';
     const emEdicao = meta.id === idAtual;
 
     return `
       <div class="list-item ${emEdicao ? 'list-item-current' : ''}">
         <div class="list-item-info">
-          <div class="list-item-title">${escapeHtml(sexo)} · ${escapeHtml(idade)}${emEdicao ? '<span class="list-badge">em edição</span>' : ''}</div>
-          <div class="list-item-sub">${produtos ? produtos + ' · ' : ''}Atualizado em ${escapeHtml(atualizado)}</div>
+          <div class="list-item-title">${nomeProdutor}${emEdicao ? '<span class="list-badge">em edição</span>' : ''}</div>
+          <div class="list-item-sub">🏡 ${nomePropriedade} · ${escapeHtml(idade)} · Atualizado em ${escapeHtml(atualizado)}</div>
         </div>
         <div class="list-item-actions">
           <button class="list-item-btn" onclick="editarEntrevista('${meta.id}')">✎ Editar</button>
@@ -1815,7 +1887,8 @@ function excluirEntrevista(id) {
 function salvarEntrevista(opts = {}) {
   const silent = opts.silent === true;
   const data = collectData();
-  const semDados = !data.gps.latitude && !data.bloco1.q1_idade && !getRadio('q2');
+  const semDados = !data.gps.latitude && !data.bloco1.q1_idade && !getRadio('q2')
+    && !data.bloco1.nomeProdutor && !data.bloco1.nomePropriedade;
 
   if (semDados) {
     if (silent) {
