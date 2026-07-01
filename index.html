@@ -159,16 +159,171 @@
   .db-strip {
     background: rgba(0,0,0,0.18);
     border-radius: 0 0 var(--radius) var(--radius);
-    padding: 6px 12px;
+    padding: 6px 8px 6px 12px;
     font-size: 10.5px;
     font-family: 'Space Mono', monospace;
     color: var(--green-50);
     margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .db-strip strong {
     color: var(--amber-100);
     font-size: 11.5px;
+  }
+
+  .db-strip-btn {
+    background: var(--green-600);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 10.5px;
+    font-family: 'Sora', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .db-strip-btn:active { opacity: 0.8; }
+
+  /* LISTA DE ENTREVISTAS SALVAS (edição) */
+  .list-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,20,15,0.55);
+    z-index: 300;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .list-overlay.open { display: flex; }
+
+  .list-modal {
+    background: var(--bg);
+    width: 100%;
+    max-width: 700px;
+    max-height: 82vh;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.3);
+  }
+
+  .list-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1.5px solid var(--green-100);
+    background: var(--card);
+    border-radius: 16px 16px 0 0;
+  }
+
+  .list-modal-header h3 {
+    font-size: 13px;
+    color: var(--green-800);
+    font-weight: 600;
+  }
+
+  .list-close-btn {
+    background: var(--gray-100);
+    border: none;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    color: var(--gray-800);
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .list-modal-body {
+    overflow-y: auto;
+    padding: 12px 16px 20px;
+    flex: 1;
+  }
+
+  .list-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    padding: 30px 10px;
+  }
+
+  .list-item {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .list-item-current {
+    border: 1px solid var(--amber-400);
+    background: var(--amber-50);
+  }
+
+  .list-item-info { min-width: 0; flex: 1; }
+
+  .list-item-title {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 3px;
+  }
+
+  .list-badge {
+    display: inline-block;
+    background: var(--amber-400);
+    color: white;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .list-item-sub {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .list-item-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .list-item-btn {
+    background: var(--green-400);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-family: 'Sora', sans-serif;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .list-item-btn-danger {
+    background: var(--red-50);
+    color: var(--red-600);
+    padding: 6px 8px;
   }
 
   /* TABS */
@@ -627,7 +782,8 @@
     <button class="gps-btn" onclick="captureGPS()">📡 Capturar</button>
   </div>
   <div class="db-strip" id="dbStrip" title="Entrevistas salvas no banco de dados local">
-    💾 Banco de dados: <strong id="dbCounter">0</strong> entrevista(s) salva(s)
+    <span>💾 Banco de dados: <strong id="dbCounter">0</strong> entrevista(s) salva(s)</span>
+    <button class="db-strip-btn" onclick="abrirListaEntrevistas()">📋 Ver / Editar</button>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progressBar" style="width:14.28%"></div>
@@ -1081,6 +1237,7 @@
     <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px">Apenas esta entrevista</p>
     <div class="final-actions">
       <button class="btn-lg" style="background:var(--green-400);color:white" onclick="exportJSON()">⬇ Exportar JSON</button>
+      <button class="btn-lg" style="background:var(--blue-50);color:var(--blue-600);border:0.5px solid var(--border-strong)" onclick="abrirListaEntrevistas()">📋 Ver / Editar Entrevistas</button>
       <button class="btn-lg" style="background:var(--gray-100);color:var(--gray-800);border:0.5px solid var(--border-strong)" onclick="novaColeta()">+ Nova Coleta</button>
       <button class="btn-lg" style="background:var(--red-50);color:var(--red-600);border:0.5px solid var(--border-strong)" onclick="limparBancoDados()">🗑 Limpar Banco de Dados</button>
     </div>
@@ -1092,6 +1249,16 @@
   <button class="btn btn-prev" id="btnPrev" onclick="navigate(-1)">← Ant.</button>
   <button class="btn btn-next" id="btnNext" onclick="navigate(1)">Próximo →</button>
   <button class="btn btn-export" id="btnSalvarRapido" onclick="salvarEntrevista()" title="Salvar entrevista atual no banco de dados">💾</button>
+</div>
+
+<div class="list-overlay" id="listOverlay">
+  <div class="list-modal">
+    <div class="list-modal-header">
+      <h3>📋 Entrevistas Salvas</h3>
+      <button class="list-close-btn" onclick="fecharListaEntrevistas()">✕</button>
+    </div>
+    <div class="list-modal-body" id="listModalBody"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1173,7 +1340,11 @@ function submitForm() {
 }
 
 function novaColeta() {
-  if (!confirm('Iniciar nova coleta? Os dados desta entrevista no formulário serão perdidos (as entrevistas já salvas no banco de dados permanecem armazenadas).')) return;
+  const salvou = salvarEntrevista({ silent: true, motivo: 'novaColeta' });
+  const msg = salvou
+    ? 'A entrevista em andamento foi salva automaticamente no banco de dados.\n\nDeseja iniciar uma nova coleta agora? O formulário em tela será limpo.'
+    : 'Nenhum dado relevante foi preenchido nesta entrevista, então nada foi salvo automaticamente.\n\nDeseja iniciar uma nova coleta agora? O formulário em tela será limpo.';
+  if (!confirm(msg)) return;
   resetForm();
 }
 
@@ -1269,6 +1440,14 @@ function toggleConditional(condId, triggerValue, radioEl) {
 }
 
 // Data collection
+const CHECKBOX_GROUPS = {
+  q11: ['q11a', 'q11b', 'q11c', 'q11d'],
+  q14: ['q14a', 'q14b', 'q14c', 'q14d', 'q14e', 'q14f'],
+  q21: ['q21a', 'q21b', 'q21c', 'q21d', 'q21e', 'q21f'],
+  q22: ['q22a', 'q22b', 'q22c', 'q22d'],
+  q26: ['q26a', 'q26b', 'q26c', 'q26d'],
+};
+
 function collectData() {
   const data = {
     meta: {
@@ -1297,10 +1476,10 @@ function collectData() {
       q10_origemAprendizado: getRadio('q10'),
     },
     bloco2: {
-      q11_equipamentos: getCheckboxes(['q11a','q11b','q11c','q11d']),
+      q11_equipamentos: getCheckboxes(CHECKBOX_GROUPS.q11),
       q12_internet: getRadio('q12'),
       q13_usouTecnologia: getRadio('q13'),
-      q14_tecnologiasUsadas: getCheckboxes(['q14a','q14b','q14c','q14d','q14e','q14f']),
+      q14_tecnologiasUsadas: getCheckboxes(CHECKBOX_GROUPS.q14),
       q14_outros: document.getElementById('q14outros').value,
       q15_frequencia: getRadio('q15'),
       q16_facilidade: getRadio('q16'),
@@ -1312,15 +1491,15 @@ function collectData() {
       q20_preferencia: getRadio('q20'),
     },
     bloco4: {
-      q21_melhorias: getCheckboxes(['q21a','q21b','q21c','q21d','q21e','q21f']),
-      q22_mudancasPercebidas: getCheckboxes(['q22a','q22b','q22c','q22d']),
+      q21_melhorias: getCheckboxes(CHECKBOX_GROUPS.q21),
+      q22_mudancasPercebidas: getCheckboxes(CHECKBOX_GROUPS.q22),
       q23_ajudaSustentabilidade: getRadio('q23'),
       q23_explicacao: document.getElementById('q23exp').value,
     },
     bloco5: {
       q24_controleProducao: getRadio('q24'),
       q25_tecnologiaPNAE: getRadio('q25'),
-      q26_facilitou: getCheckboxes(['q26a','q26b','q26c','q26d']),
+      q26_facilitou: getCheckboxes(CHECKBOX_GROUPS.q26),
       q27_PNAEaprendizado: getRadio('q27'),
       q27_explicacao: document.getElementById('q27exp').value,
     },
@@ -1409,11 +1588,243 @@ function updateDbCounter() {
   if (c2) c2.textContent = n;
 }
 
-function salvarEntrevista() {
+// ===== EDIÇÃO DE ENTREVISTAS SALVAS =====
+
+function setRadioValue(name, value) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+    el.checked = (value != null && el.value === value);
+  });
+}
+
+function setCheckboxGroup(ids, values) {
+  const arr = Array.isArray(values) ? values : [];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = arr.includes(el.value);
+  });
+}
+
+function setFieldValue(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = (val === null || val === undefined) ? '' : val;
+}
+
+function atualizarCondicionais() {
+  const grupos = [
+    { name: 'q9', condId: 'q9cond', trigger: 'Sim' },
+    { name: 'q13', condId: 'q14block', trigger: 'Sim' },
+    { name: 'q30', condId: 'q30cond', trigger: 'Sim' },
+  ];
+  grupos.forEach(({ name, condId, trigger }) => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    const cond = document.getElementById(condId);
+    if (cond) cond.classList.toggle('visible', !!checked && checked.value === trigger);
+  });
+}
+
+function preencherFormulario(entry) {
+  // GPS
+  setFieldValue('gpsLat', entry.gps?.latitude);
+  setFieldValue('gpsLng', entry.gps?.longitude);
+  setFieldValue('gpsAlt', entry.gps?.altitude);
+  setFieldValue('gpsAcc', entry.gps?.precisao);
+  setFieldValue('gpsTime', entry.gps?.dataHoraCaptura);
+  const gpsDot = document.getElementById('gpsDot');
+  const gpsCoords = document.getElementById('gpsCoords');
+  const gpsStatus = document.getElementById('gpsStatus');
+  if (entry.gps?.latitude) {
+    if (gpsDot) gpsDot.className = 'gps-dot active';
+    if (gpsCoords) gpsCoords.textContent = `Lat: ${entry.gps.latitude} | Lng: ${entry.gps.longitude} | ±${entry.gps.precisao || '—'}`;
+    if (gpsStatus) gpsStatus.textContent = `✓ Coordenadas carregadas da entrevista salva (${entry.gps.dataHoraCaptura || ''})`;
+  } else {
+    if (gpsDot) gpsDot.className = 'gps-dot';
+    if (gpsCoords) gpsCoords.textContent = 'GNSS/GPS — aguardando captura';
+    if (gpsStatus) gpsStatus.textContent = 'Pressione "Capturar" no topo para obter as coordenadas.';
+  }
+
+  // Bloco 1
+  const b1 = entry.bloco1 || {};
+  setFieldValue('q1', b1.q1_idade);
+  setRadioValue('q2', b1.q2_sexo);
+  setRadioValue('q3', b1.q3_escolaridade);
+  setFieldValue('q4', b1.q4_tempoAtuacao);
+  setFieldValue('q5', b1.q5_areaTotalHa);
+  setFieldValue('q6', b1.q6_areaProducaoHa);
+  setFieldValue('q7', b1.q7_pessoasFamilia);
+  setFieldValue('q8', b1.q8_principaisProdutos);
+  setRadioValue('q9', b1.q9_associacao);
+  setFieldValue('q9detail', b1.q9_qualAssociacao);
+  setRadioValue('q10', b1.q10_origemAprendizado);
+
+  // Bloco 2
+  const b2 = entry.bloco2 || {};
+  setCheckboxGroup(CHECKBOX_GROUPS.q11, b2.q11_equipamentos);
+  setRadioValue('q12', b2.q12_internet);
+  setRadioValue('q13', b2.q13_usouTecnologia);
+  setCheckboxGroup(CHECKBOX_GROUPS.q14, b2.q14_tecnologiasUsadas);
+  setFieldValue('q14outros', b2.q14_outros);
+  setRadioValue('q15', b2.q15_frequencia);
+  setRadioValue('q16', b2.q16_facilidade);
+
+  // Bloco 3
+  const b3 = entry.bloco3 || {};
+  setRadioValue('q17', b3.q17_ajudamEntender);
+  setRadioValue('q18', b3.q18_aplicaNaPratica);
+  setFieldValue('q19', b3.q19_exemploConcreto);
+  setRadioValue('q20', b3.q20_preferencia);
+
+  // Bloco 4
+  const b4 = entry.bloco4 || {};
+  setCheckboxGroup(CHECKBOX_GROUPS.q21, b4.q21_melhorias);
+  setCheckboxGroup(CHECKBOX_GROUPS.q22, b4.q22_mudancasPercebidas);
+  setRadioValue('q23', b4.q23_ajudaSustentabilidade);
+  setFieldValue('q23exp', b4.q23_explicacao);
+
+  // Bloco 5
+  const b5 = entry.bloco5 || {};
+  setRadioValue('q24', b5.q24_controleProducao);
+  setRadioValue('q25', b5.q25_tecnologiaPNAE);
+  setCheckboxGroup(CHECKBOX_GROUPS.q26, b5.q26_facilitou);
+  setRadioValue('q27', b5.q27_PNAEaprendizado);
+  setFieldValue('q27exp', b5.q27_explicacao);
+
+  // Bloco 6
+  const b6 = entry.bloco6 || {};
+  setRadioValue('q28', b6.q28_saberesTradicionals);
+  setRadioValue('q29', b6.q29_tecnologiaDialoga);
+  setRadioValue('q30', b6.q30_deixouDeUsar);
+  setFieldValue('q30exp', b6.q30_explicacao);
+  setRadioValue('q31', b6.q31_autonomia);
+
+  // Bloco 7
+  const b7 = entry.bloco7 || {};
+  setRadioValue('q32', b7.q32_outrosMercados);
+  setRadioValue('q33', b7.q33_tecnologiaMercados);
+  setFieldValue('q34', b7.q34_dificuldadesMercados);
+
+  // Bloco Final
+  const bf = entry.blocoFinal || {};
+  setFieldValue('q35', bf.q35_tecnologiaAdequada);
+  setFieldValue('q36', bf.q36_sugestoesPoliticas);
+  setFieldValue('q37', bf.q37_comentariosLivres);
+
+  atualizarCondicionais();
+}
+
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function abrirListaEntrevistas() {
+  renderListaEntrevistas();
+  document.getElementById('listOverlay').classList.add('open');
+}
+
+function fecharListaEntrevistas() {
+  document.getElementById('listOverlay').classList.remove('open');
+}
+
+function renderListaEntrevistas() {
+  const db = loadDatabase();
+  const body = document.getElementById('listModalBody');
+  if (!body) return;
+
+  if (db.length === 0) {
+    body.innerHTML = '<p class="list-empty">Nenhuma entrevista salva ainda.<br>Preencha o formulário e toque em "Salvar" para começar o banco de dados.</p>';
+    return;
+  }
+
+  const idAtual = getCurrentEntrevistaId();
+  const ordenado = db.slice().sort((a, b) => {
+    const ta = (a.meta && (a.meta.atualizadoEm || a.meta.criadoEm)) || '';
+    const tb = (b.meta && (b.meta.atualizadoEm || b.meta.criadoEm)) || '';
+    return tb.localeCompare(ta);
+  });
+
+  body.innerHTML = ordenado.map(entry => {
+    const meta = entry.meta || {};
+    const b1 = entry.bloco1 || {};
+    const idade = b1.q1_idade ? `${b1.q1_idade} anos` : 'idade não informada';
+    const sexo = b1.q2_sexo || 'Sexo não informado';
+    const produtos = b1.q8_principaisProdutos ? escapeHtml(b1.q8_principaisProdutos) : '';
+    const atualizado = meta.atualizadoEm || meta.criadoEm || meta.dataColeta || '—';
+    const emEdicao = meta.id === idAtual;
+
+    return `
+      <div class="list-item ${emEdicao ? 'list-item-current' : ''}">
+        <div class="list-item-info">
+          <div class="list-item-title">${escapeHtml(sexo)} · ${escapeHtml(idade)}${emEdicao ? '<span class="list-badge">em edição</span>' : ''}</div>
+          <div class="list-item-sub">${produtos ? produtos + ' · ' : ''}Atualizado em ${escapeHtml(atualizado)}</div>
+        </div>
+        <div class="list-item-actions">
+          <button class="list-item-btn" onclick="editarEntrevista('${meta.id}')">✎ Editar</button>
+          <button class="list-item-btn list-item-btn-danger" onclick="excluirEntrevista('${meta.id}')">🗑</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function editarEntrevista(id) {
+  // Se havia outra entrevista em andamento no formulário, salva automaticamente antes de trocar
+  if (getCurrentEntrevistaId() !== id) {
+    salvarEntrevista({ silent: true });
+  }
+
+  const db = loadDatabase();
+  const entry = db.find(d => d.meta && d.meta.id === id);
+  if (!entry) {
+    showToast('Entrevista não encontrada (pode ter sido excluída).');
+    renderListaEntrevistas();
+    return;
+  }
+
+  preencherFormulario(entry);
+  setCurrentEntrevistaId(id);
+  fecharListaEntrevistas();
+
+  document.getElementById('finalScreen').classList.remove('active');
+  document.getElementById('navBottom').style.display = 'flex';
+  document.getElementById('tabsContainer').style.display = 'flex';
+  goToTab(0);
+  window.scrollTo(0, 0);
+  showToast('Entrevista aberta para edição. Alterações serão salvas ao tocar em "Salvar".');
+}
+
+function excluirEntrevista(id) {
+  const db = loadDatabase();
+  const idx = db.findIndex(d => d.meta && d.meta.id === id);
+  if (idx === -1) return;
+
+  if (!confirm('Excluir permanentemente esta entrevista do banco de dados? Esta ação não pode ser desfeita.')) return;
+
+  db.splice(idx, 1);
+  saveDatabaseArray(db);
+
+  if (getCurrentEntrevistaId() === id) {
+    clearCurrentEntrevistaId();
+  }
+
+  updateDbCounter();
+  renderListaEntrevistas();
+  showToast('Entrevista excluída do banco de dados.');
+}
+
+function salvarEntrevista(opts = {}) {
+  const silent = opts.silent === true;
   const data = collectData();
   const semDados = !data.gps.latitude && !data.bloco1.q1_idade && !getRadio('q2');
-  if (semDados && !confirm('Poucos campos foram preenchidos. Deseja salvar mesmo assim?')) {
-    return;
+
+  if (semDados) {
+    if (silent) {
+      // Auto-save silencioso: se não há nenhum dado relevante preenchido, não cria registro vazio
+      return false;
+    }
+    if (!confirm('Poucos campos foram preenchidos. Deseja salvar mesmo assim?')) {
+      return false;
+    }
   }
 
   const db = loadDatabase();
@@ -1439,18 +1850,24 @@ function salvarEntrevista() {
   const ok = saveDatabaseArray(db);
   if (ok) {
     updateDbCounter();
-    showToast(idx === -1
-      ? '✓ Entrevista salva! Total no banco: ' + db.length
-      : '✓ Entrevista atualizada! Total no banco: ' + db.length);
+    if (!silent) {
+      showToast(idx === -1
+        ? '✓ Entrevista salva! Total no banco: ' + db.length
+        : '✓ Entrevista atualizada! Total no banco: ' + db.length);
+    }
+    return true;
   } else {
-    showToast('⚠ Erro ao salvar (armazenamento cheio ou indisponível).');
+    if (!silent) {
+      showToast('⚠ Erro ao salvar (armazenamento cheio ou indisponível).');
+    }
+    return false;
   }
 }
 
 function limparBancoDados() {
   const n = loadDatabase().length;
   if (n === 0) { showToast('O banco de dados já está vazio.'); return; }
-  if (!confirm(`Isso apagará permanentemente as ${n} entrevista(s) salvas no banco de dados deste dispositivo. Deseja continuar? Recomenda-se exportar a planilha antes de limpar.`)) return;
+  if (!confirm(`⚠ ATENÇÃO: esta ação é irreversível.\n\nTodos os dados armazenados no banco de dados deste dispositivo (${n} entrevista(s)) serão excluídos permanentemente e não poderão ser recuperados.\n\nRecomenda-se exportar a planilha (Excel ou CSV) antes de continuar.\n\nDeseja realmente excluir todos os dados agora?`)) return;
   localStorage.removeItem(DB_KEY);
   updateDbCounter();
   showToast('Banco de dados limpo.');
