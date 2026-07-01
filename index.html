@@ -6,6 +6,7 @@
 <title>Coleta de Dados — Agricultura Familiar Gurupi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --green-50: #EAF3DE;
@@ -154,6 +155,21 @@
   }
 
   .gps-btn:active { opacity: 0.8; }
+
+  .db-strip {
+    background: rgba(0,0,0,0.18);
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 6px 12px;
+    font-size: 10.5px;
+    font-family: 'Space Mono', monospace;
+    color: var(--green-50);
+    margin-top: 1px;
+  }
+
+  .db-strip strong {
+    color: var(--amber-100);
+    font-size: 11.5px;
+  }
 
   /* TABS */
   .tabs-scroll {
@@ -610,6 +626,9 @@
     <span class="gps-coords" id="gpsCoords">GNSS/GPS — aguardando captura</span>
     <button class="gps-btn" onclick="captureGPS()">📡 Capturar</button>
   </div>
+  <div class="db-strip" id="dbStrip" title="Entrevistas salvas no banco de dados local">
+    💾 Banco de dados: <strong id="dbCounter">0</strong> entrevista(s) salva(s)
+  </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progressBar" style="width:14.28%"></div>
   </div>
@@ -1041,11 +1060,29 @@
   <div class="final-screen" id="finalScreen">
     <div class="final-icon">✅</div>
     <h2>Coleta Finalizada!</h2>
-    <p>Todos os blocos foram preenchidos.<br>Exporte os dados para salvar ou compartilhar.</p>
+    <p>Todos os blocos foram preenchidos.<br>Salve esta entrevista no banco de dados antes de iniciar uma nova coleta.</p>
+
+    <div class="final-actions">
+      <button class="btn-lg" style="background:var(--amber-400);color:white;font-weight:600" onclick="salvarEntrevista()">💾 Salvar no Banco de Dados</button>
+    </div>
+
+    <p style="margin-top:14px;font-size:11.5px;color:var(--text-muted)">
+      Entrevistas salvas até agora: <strong id="dbCounterFinal" style="color:var(--green-800)">0</strong>
+    </p>
+
+    <div class="section-sep" style="margin:16px 0"></div>
+    <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px">Exportar banco de dados completo (todas as entrevistas salvas)</p>
+    <div class="final-actions">
+      <button class="btn-lg" style="background:var(--teal-600);color:white" onclick="exportDatabaseXLSX()">📊 Baixar Planilha (Excel)</button>
+      <button class="btn-lg" style="background:var(--teal-400);color:white" onclick="exportDatabaseCSV()">⬇ Baixar Planilha (CSV)</button>
+    </div>
+
+    <div class="section-sep" style="margin:16px 0"></div>
+    <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:8px">Apenas esta entrevista</p>
     <div class="final-actions">
       <button class="btn-lg" style="background:var(--green-400);color:white" onclick="exportJSON()">⬇ Exportar JSON</button>
-      <button class="btn-lg" style="background:var(--teal-600);color:white" onclick="exportCSV()">⬇ Exportar CSV</button>
       <button class="btn-lg" style="background:var(--gray-100);color:var(--gray-800);border:0.5px solid var(--border-strong)" onclick="novaColeta()">+ Nova Coleta</button>
+      <button class="btn-lg" style="background:var(--red-50);color:var(--red-600);border:0.5px solid var(--border-strong)" onclick="limparBancoDados()">🗑 Limpar Banco de Dados</button>
     </div>
   </div>
 
@@ -1054,7 +1091,7 @@
 <div class="nav-bottom" id="navBottom">
   <button class="btn btn-prev" id="btnPrev" onclick="navigate(-1)">← Ant.</button>
   <button class="btn btn-next" id="btnNext" onclick="navigate(1)">Próximo →</button>
-  <button class="btn btn-export" id="btnExport" onclick="exportJSON()" title="Exportar dados">⬇</button>
+  <button class="btn btn-export" id="btnSalvarRapido" onclick="salvarEntrevista()" title="Salvar entrevista atual no banco de dados">💾</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1136,8 +1173,40 @@ function submitForm() {
 }
 
 function novaColeta() {
-  if (!confirm('Iniciar nova coleta? Os dados atuais serão perdidos (salve antes).')) return;
-  location.reload();
+  if (!confirm('Iniciar nova coleta? Os dados desta entrevista no formulário serão perdidos (as entrevistas já salvas no banco de dados permanecem armazenadas).')) return;
+  resetForm();
+}
+
+function resetForm() {
+  // Libera o identificador da entrevista em andamento: a próxima ação de salvar criará um novo registro
+  clearCurrentEntrevistaId();
+
+  // Limpa todos os campos de texto, número e textarea (inclusive os campos de GPS, que são readonly)
+  document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(el => { el.value = ''; });
+
+  // Desmarca todos os radios e checkboxes
+  document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => { el.checked = false; });
+
+  // Esconde novamente os campos condicionais (ex: pergunta 30)
+  document.querySelectorAll('.conditional').forEach(el => el.classList.remove('visible'));
+
+  // Reseta o painel de GPS ao estado inicial
+  const gpsDot = document.getElementById('gpsDot');
+  const gpsCoords = document.getElementById('gpsCoords');
+  const gpsStatus = document.getElementById('gpsStatus');
+  if (gpsDot) gpsDot.className = 'gps-dot';
+  if (gpsCoords) gpsCoords.textContent = 'GNSS/GPS — aguardando captura';
+  if (gpsStatus) gpsStatus.textContent = 'Pressione "Capturar" no topo para obter as coordenadas.';
+
+  // Volta a mostrar as abas e a navegação, escondendo a tela final
+  document.getElementById('finalScreen').classList.remove('active');
+  document.getElementById('navBottom').style.display = 'flex';
+  document.getElementById('tabsContainer').style.display = 'flex';
+
+  // Volta para o primeiro bloco
+  goToTab(0);
+  window.scrollTo(0, 0);
+  showToast('Formulário limpo — pronto para nova coleta!');
 }
 
 // GPS
@@ -1288,6 +1357,144 @@ function getCheckboxes(ids) {
   }).map(id => document.getElementById(id).value);
 }
 
+// ===== BANCO DE DADOS LOCAL (persistente no navegador/dispositivo) =====
+const DB_KEY = 'agri_familiar_gurupi_db_v1';
+const CURRENT_ID_KEY = 'agri_familiar_gurupi_current_id';
+let currentEntrevistaId = null;
+
+function getCurrentEntrevistaId() {
+  if (currentEntrevistaId) return currentEntrevistaId;
+  try {
+    return sessionStorage.getItem(CURRENT_ID_KEY);
+  } catch (e) {
+    return null;
+  }
+}
+
+function setCurrentEntrevistaId(id) {
+  currentEntrevistaId = id;
+  try { sessionStorage.setItem(CURRENT_ID_KEY, id); } catch (e) {}
+}
+
+function clearCurrentEntrevistaId() {
+  currentEntrevistaId = null;
+  try { sessionStorage.removeItem(CURRENT_ID_KEY); } catch (e) {}
+}
+
+function loadDatabase() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Erro ao ler banco de dados local:', e);
+    return [];
+  }
+}
+
+function saveDatabaseArray(arr) {
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify(arr));
+    return true;
+  } catch (e) {
+    console.error('Erro ao gravar banco de dados local:', e);
+    return false;
+  }
+}
+
+function updateDbCounter() {
+  const n = loadDatabase().length;
+  const c1 = document.getElementById('dbCounter');
+  const c2 = document.getElementById('dbCounterFinal');
+  if (c1) c1.textContent = n;
+  if (c2) c2.textContent = n;
+}
+
+function salvarEntrevista() {
+  const data = collectData();
+  const semDados = !data.gps.latitude && !data.bloco1.q1_idade && !getRadio('q2');
+  if (semDados && !confirm('Poucos campos foram preenchidos. Deseja salvar mesmo assim?')) {
+    return;
+  }
+
+  const db = loadDatabase();
+  const idAtual = getCurrentEntrevistaId();
+  const idx = idAtual ? db.findIndex(d => d.meta && d.meta.id === idAtual) : -1;
+
+  if (idx === -1) {
+    // Nenhuma entrevista em andamento identificada: cria um novo registro
+    const novoId = 'entrevista_' + Date.now();
+    data.meta.id = novoId;
+    data.meta.criadoEm = data.meta.dataColeta;
+    data.meta.atualizadoEm = data.meta.dataColeta;
+    db.push(data);
+    setCurrentEntrevistaId(novoId);
+  } else {
+    // Entrevista já existente: atualiza o mesmo registro (não duplica)
+    data.meta.id = idAtual;
+    data.meta.criadoEm = db[idx].meta.criadoEm || db[idx].meta.dataColeta || data.meta.dataColeta;
+    data.meta.atualizadoEm = new Date().toLocaleString('pt-BR');
+    db[idx] = data;
+  }
+
+  const ok = saveDatabaseArray(db);
+  if (ok) {
+    updateDbCounter();
+    showToast(idx === -1
+      ? '✓ Entrevista salva! Total no banco: ' + db.length
+      : '✓ Entrevista atualizada! Total no banco: ' + db.length);
+  } else {
+    showToast('⚠ Erro ao salvar (armazenamento cheio ou indisponível).');
+  }
+}
+
+function limparBancoDados() {
+  const n = loadDatabase().length;
+  if (n === 0) { showToast('O banco de dados já está vazio.'); return; }
+  if (!confirm(`Isso apagará permanentemente as ${n} entrevista(s) salvas no banco de dados deste dispositivo. Deseja continuar? Recomenda-se exportar a planilha antes de limpar.`)) return;
+  localStorage.removeItem(DB_KEY);
+  updateDbCounter();
+  showToast('Banco de dados limpo.');
+}
+
+function exportDatabaseCSV() {
+  const db = loadDatabase();
+  if (db.length === 0) { showToast('Nenhuma entrevista salva ainda. Use "Salvar no Banco de Dados" primeiro.'); return; }
+  const flatArr = db.map(d => flattenObj(d));
+  const keysSet = new Set();
+  flatArr.forEach(f => Object.keys(f).forEach(k => keysSet.add(k)));
+  const keys = Array.from(keysSet);
+  const rows = [keys.join(',')];
+  flatArr.forEach(f => {
+    rows.push(keys.map(k => '"' + String(f[k] ?? '').replace(/"/g, '""') + '"').join(','));
+  });
+  const csv = rows.join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+  a.href = url;
+  a.download = `banco_dados_agri_familiar_gurupi_${ts}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Planilha CSV exportada com ' + db.length + ' entrevista(s)!');
+}
+
+function exportDatabaseXLSX() {
+  const db = loadDatabase();
+  if (db.length === 0) { showToast('Nenhuma entrevista salva ainda. Use "Salvar no Banco de Dados" primeiro.'); return; }
+  if (typeof XLSX === 'undefined') {
+    showToast('Biblioteca de planilha indisponível (sem internet?). Use exportar CSV.');
+    return;
+  }
+  const flatArr = db.map(d => flattenObj(d));
+  const ws = XLSX.utils.json_to_sheet(flatArr);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Entrevistas');
+  const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+  XLSX.writeFile(wb, `banco_dados_agri_familiar_gurupi_${ts}.xlsx`);
+  showToast('Planilha Excel exportada com ' + db.length + ' entrevista(s)!');
+}
+
 function exportJSON() {
   const data = collectData();
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1344,6 +1551,7 @@ function showToast(msg) {
 buildTabs();
 updateNav();
 updateProgress();
+updateDbCounter();
 </script>
 </body>
 </html>
